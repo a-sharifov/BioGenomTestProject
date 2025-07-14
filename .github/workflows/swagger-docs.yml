@@ -1,0 +1,44 @@
+name: Swagger Docs
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  generate-docs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '9.0.x' 
+
+      - name: Restore and Build
+        run: |
+          dotnet restore
+          dotnet build --no-restore
+
+      - name: Install Swashbuckle CLI
+        run: dotnet tool install --global Swashbuckle.AspNetCore.Cli
+
+      - name: Generate swagger.json
+        run: |
+          dotnet swagger tofile \
+            --output swagger.json \
+            ./YourProject.WebApi.dll v1
+
+      - name: Install ReDoc CLI
+        run: npm install -g redoc-cli
+
+      - name: Generate HTML documentation with ReDoc
+        run: redoc-cli bundle swagger.json -o docs/index.html
+
+      - name: Upload docs artifact (optional)
+        uses: actions/upload-artifact@v3
+        with:
+          name: swagger-docs
+          path: docs/index.html
