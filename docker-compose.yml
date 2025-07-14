@@ -1,0 +1,12 @@
+services:
+  api:
+    container_name: api
+    image: ${DOCKER_REGISTRY-}biogenomtestproject
+    build:
+      context: .
+      dockerfile: BioGenomTestProject/Dockerfile
+
+  db:
+    container_name: db
+    image: postgres:15-alpine
+   
