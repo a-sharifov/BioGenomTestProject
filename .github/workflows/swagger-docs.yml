@@ -3,17 +3,20 @@ name: Swagger Docs
 on:
   push:
     branches: [main]
-  workflow_dispatch: 
+  workflow_dispatch:
+
+permissions:
+  contents: write  
 
 jobs:
-  generate-docs:
+  generate-and-deploy-docs:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup .NET
+      - name: Setup .NET 9
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '9.0.x'
@@ -23,13 +26,13 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Restore dependencies
+      - name: Restore NuGet packages
         run: dotnet restore BioGenomTestProject.sln
 
-      - name: Build project
+      - name: Build the solution
         run: dotnet build BioGenomTestProject.sln --no-restore
 
-      - name: Install Swashbuckle CLI tool
+      - name: Install Swashbuckle CLI
         run: |
           dotnet tool install --global Swashbuckle.AspNetCore.Cli
           echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
@@ -43,11 +46,11 @@ jobs:
       - name: Install ReDoc CLI
         run: npm install -g redoc-cli
 
-      - name: Generate HTML documentation with ReDoc
+      - name: Generate HTML documentation
         run: redoc-cli bundle swagger.json -o docs/index.html
 
-      - name: Upload docs artifact
-        uses: actions/upload-artifact@v4
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
         with:
-          name: swagger-docs
-          path: docs/index.html
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: docs
