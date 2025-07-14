@@ -8,5 +8,5 @@ public interface INutritionService
     Task<IEnumerable<NutrientResultDto>> GetDeficientNutrientsAsync();
     Task<IEnumerable<NutrientResultDto>> GetSufficientNutrientsAsync();
     Task<NutritionSummaryDto> GetNutritionSummaryAsync();
-    Task<NutritionAssessment?> GetNutritionAssessmentAsync();
+    Task<NutritionAssessmentDto?> GetNutritionAssessmentAsync();
 } 

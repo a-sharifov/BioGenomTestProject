@@ -6,7 +6,7 @@ namespace BioGenomTestProject.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class NutritionController(INutritionService nutritionService) : ControllerBase
+public sealed class NutritionController(INutritionService nutritionService) : ControllerBase
 {
     private readonly INutritionService _nutritionService = nutritionService;
 

@@ -26,36 +26,30 @@ public class NutritionService(INutritionRepository nutritionRepository) : INutri
         var sufficientCount = await _nutritionRepository.GetSufficientNutrientsCountAsync();
         var totalCount = deficientCount + sufficientCount;
 
-        return new NutritionSummaryDto
-        {
-            TotalNutrients = totalCount,
-            DeficientNutrients = deficientCount,
-            SufficientNutrients = sufficientCount,
-        };
+        return new NutritionSummaryDto(totalCount, deficientCount, sufficientCount);
     }
 
-    public Task<NutritionAssessment?> GetNutritionAssessmentAsync()
+    public async Task<NutritionAssessmentDto?> GetNutritionAssessmentAsync()
     {
-        return _nutritionRepository.GetNutritionAssessmentAsync();
+        var assessment = await _nutritionRepository.GetNutritionAssessmentAsync();
+        return assessment is null ? null : MapToDto(assessment);
     }
 
-    private static NutrientResultDto MapToDto(Entities.NutrientResult entity)
-    {
-        return new NutrientResultDto
-        {
-            Id = entity.Id,
-            Nutrient = new NutrientDto
-            {
-                Id = entity.Nutrient.Id,
-                Name = entity.Nutrient.Name,
-                Unit = entity.Nutrient.Unit
-            } ,
-            CurrentValue = entity.CurrentValue,
-            RecommendedMin = entity.RecommendedMin,
-            RecommendedMax = entity.RecommendedMax,
-            IsDeficient = entity.IsDeficient,
-            FoodSupplementAmount = entity.FoodSupplementAmount,
-            PharmaSupplementAmount = entity.PharmaSupplementAmount
-        };
-    }
+    private static NutrientResultDto MapToDto(NutrientResult entity) => new(
+            entity.Id,
+            entity.Nutrient == null ? null :
+            new NutrientDto(entity.Nutrient.Id, entity.Nutrient.Name, entity.Nutrient.Unit),
+            entity.CurrentValue,
+            entity.RecommendedMin,
+            entity.RecommendedMax,
+            entity.IsDeficient,
+            entity.FoodSupplementAmount,
+            entity.PharmaSupplementAmount);
+
+    private static NutritionAssessmentDto MapToDto(NutritionAssessment entity) => new(
+        entity.Id,
+        entity.AssessmentDate,
+        entity.UserId,
+        entity.Results.Select(MapToDto)
+    );
 } 

@@ -11,6 +11,7 @@ public class NutritionRepository(AppDbContext context) : INutritionRepository
     public async Task<NutritionAssessment?> GetNutritionAssessmentAsync() => 
         await _context.NutritionAssessments
             .Include(na => na.Results)
+            .ThenInclude(nr => nr.Nutrient)
             .FirstOrDefaultAsync();
 
     public async Task<IEnumerable<NutrientResult>> GetDeficientNutrientsAsync() => 

@@ -12,15 +12,14 @@ public class NutrientResult
     public float? PharmaSupplementAmount { get; private set; }
 
     public int AssessmentId { get; private set; }
-    //public NutritionAssessment Assessment { get; private set; }
+    public NutritionAssessment Assessment { get; private set; } 
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
     private NutrientResult() { } // Ef require
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 
     public NutrientResult(int nutrientId, float currentValue, float recommendedMin, float? recommendedMax,
-                          bool isDeficient, float foodSupplementAmount, float pharmaSupplementAmount,
-                          int assessmentId)
+                          bool isDeficient, float foodSupplementAmount, float pharmaSupplementAmount, int assessmentId)
     {
         NutrientId = nutrientId;
         CurrentValue = currentValue;

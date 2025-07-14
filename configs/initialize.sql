@@ -1,38 +1,38 @@
 -- Создание таблиц на основе Entity из папки Entities
-CREATE TABLE IF NOT EXISTS "Nutrients" (
-    "Id" SERIAL PRIMARY KEY,
-    "Name" VARCHAR(100) NOT NULL UNIQUE,
-    "Unit" VARCHAR(50) NOT NULL
+CREATE TABLE IF NOT EXISTS nutrients (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL UNIQUE,
+    unit VARCHAR(50) NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS "NutritionAssessments" (
-    "Id" SERIAL PRIMARY KEY,
-    "AssessmentDate" TIMESTAMP NOT NULL,
-    "UserId" INTEGER NOT NULL
+CREATE TABLE IF NOT EXISTS nutrition_assessments (
+    id SERIAL PRIMARY KEY,
+    assessment_date TIMESTAMP NOT NULL,
+    user_id INTEGER NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS "NutrientResults" (
-    "Id" SERIAL PRIMARY KEY,
-    "NutrientId" INTEGER NOT NULL,
-    "CurrentValue" REAL NOT NULL,
-    "RecommendedMin" REAL NOT NULL,
-    "RecommendedMax" REAL,
-    "IsDeficient" BOOLEAN NOT NULL,
-    "FoodSupplementAmount" REAL,
-    "PharmaSupplementAmount" REAL,
-    "AssessmentId" INTEGER NOT NULL,
-    CONSTRAINT "FK_NutrientResults_Nutrients_NutrientId" FOREIGN KEY ("NutrientId") REFERENCES "Nutrients" ("Id") ON DELETE CASCADE,
-    CONSTRAINT "FK_NutrientResults_NutritionAssessments_AssessmentId" FOREIGN KEY ("AssessmentId") REFERENCES "NutritionAssessments" ("Id") ON DELETE CASCADE
+CREATE TABLE IF NOT EXISTS nutrient_results (
+    id SERIAL PRIMARY KEY,
+    nutrient_id INTEGER NOT NULL,
+    current_value REAL NOT NULL,
+    recommended_min REAL NOT NULL,
+    recommended_max REAL,
+    is_deficient BOOLEAN NOT NULL,
+    food_supplement_amount REAL,
+    pharma_supplement_amount REAL,
+    assessment_id INTEGER NOT NULL,
+    CONSTRAINT fk_nutrient_results_nutrients_nutrient_id FOREIGN KEY (nutrient_id) REFERENCES nutrients (id) ON DELETE CASCADE,
+    CONSTRAINT fk_nutrient_results_nutrition_assessments_assessment_id FOREIGN KEY (assessment_id) REFERENCES nutrition_assessments (id) ON DELETE CASCADE
 );
 
 -- Создание индексов
-CREATE INDEX IF NOT EXISTS "IX_NutrientResults_NutrientId" ON "NutrientResults" ("NutrientId");
-CREATE INDEX IF NOT EXISTS "IX_NutrientResults_AssessmentId" ON "NutrientResults" ("AssessmentId");
-CREATE INDEX IF NOT EXISTS "IX_NutritionAssessments_AssessmentDate" ON "NutritionAssessments" ("AssessmentDate");
-CREATE INDEX IF NOT EXISTS "IX_NutritionAssessments_UserId" ON "NutritionAssessments" ("UserId");
+CREATE INDEX IF NOT EXISTS ix_nutrient_results_nutrient_id ON nutrient_results (nutrient_id);
+CREATE INDEX IF NOT EXISTS ix_nutrient_results_assessment_id ON nutrient_results (assessment_id);
+CREATE INDEX IF NOT EXISTS ix_nutrition_assessments_assessment_date ON nutrition_assessments (assessment_date);
+CREATE INDEX IF NOT EXISTS ix_nutrition_assessments_user_id ON nutrition_assessments (user_id);
 
 -- Вставка тестовых данных для витаминов и питательных веществ
-INSERT INTO "Nutrients" ("Id", "Name", "Unit") VALUES
+INSERT INTO nutrients (id, name, unit) VALUES
 (1, 'Витамин D', 'мкг/день'),
 (2, 'Витамин C', 'мг/день'),
 (3, 'Витамин B12', 'мкг/день'),
@@ -43,15 +43,15 @@ INSERT INTO "Nutrients" ("Id", "Name", "Unit") VALUES
 (8, 'Цинк', 'мг/день'),
 (9, 'Фолиевая кислота', 'мкг/день'),
 (10, 'Витамин A', 'мкг/день')
-ON CONFLICT ("Name") DO NOTHING;
+ON CONFLICT (name) DO NOTHING;
 
--- Вставка одного общего NutritionAssessment для всех пользователей
-INSERT INTO "NutritionAssessments" ("AssessmentDate", "UserId") VALUES
+-- Вставка одного общего nutrition_assessment для всех пользователей
+INSERT INTO nutrition_assessments (assessment_date, user_id) VALUES
 ('2024-01-15 10:30:00', 1)
 ON CONFLICT DO NOTHING;
 
--- Вставка результатов анализов для разных пользователей (все ссылаются на один AssessmentId = 1)
-INSERT INTO "NutrientResults" ("NutrientId", "CurrentValue", "RecommendedMin", "RecommendedMax", "IsDeficient", "FoodSupplementAmount", "PharmaSupplementAmount", "AssessmentId") VALUES
+-- Вставка результатов анализов для разных пользователей (все ссылаются на один assessment_id = 1)
+INSERT INTO nutrient_results (nutrient_id, current_value, recommended_min, recommended_max, is_deficient, food_supplement_amount, pharma_supplement_amount, assessment_id) VALUES
 -- Пользователь 1 (дефициты)
 (1, 15.5, 20.0, 50.0, true, 5.0, 10.0, 1),  -- Витамин D дефицит
 (2, 45.0, 75.0, 2000.0, true, 30.0, NULL, 1), -- Витамин C дефицит
