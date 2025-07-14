@@ -1,5 +1,4 @@
 using BioGenomTestProject.DTOs;
-using BioGenomTestProject.Entities;
 
 namespace BioGenomTestProject.Services;
 

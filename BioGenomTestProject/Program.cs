@@ -2,7 +2,6 @@ using BioGenomTestProject.DbContexts;
 using BioGenomTestProject.Repositories;
 using BioGenomTestProject.Services;
 using Microsoft.EntityFrameworkCore;
-using System.Text.Json.Serialization;
 
 internal sealed class Program
 {
@@ -23,14 +22,6 @@ internal sealed class Program
         builder.Services.AddScoped<INutritionService, NutritionService>();
 
         builder.Services.AddControllers();
-
-        //builder.Services.AddControllers()
-        //    .AddJsonOptions(options =>
-        //    {
-        //        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
-        //        options.JsonSerializerOptions.WriteIndented = true;
-        //    });
-
 
         var app = builder.Build();
 
