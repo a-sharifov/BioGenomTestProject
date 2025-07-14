@@ -2,7 +2,7 @@ name: Swagger Docs
 
 on:
   push:
-    branches: [master]
+    branches: [main]
 
 jobs:
   generate-docs:
@@ -19,8 +19,8 @@ jobs:
 
       - name: Restore and Build
         run: |
-          dotnet restore
-          dotnet build --no-restore
+          dotnet restore BioGenomTestProject.sln
+          dotnet build BioGenomTestProject.sln --no-restore
 
       - name: Generate swagger.json
         run: |
