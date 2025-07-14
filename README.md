@@ -1,10 +1,4 @@
-# BioGenomTestProject
-
-<p align="center">
-  <img src="https://raw.githubusercontent.com/a-sharifov/BioGenomTestProject/main/.github/banner.png" alt="BioGenomTestProject Banner" width="600"/>
-</p>
-
-[![API Docs (Redoc)](https://img.shields.io/badge/Redoc-API%20Docs-blue?logo=readthedocs&style=flat-square)](https://a-sharifov.github.io/BioGenomTestProject/)
+# BioGenomTestProject   [![API Docs (Redoc)](https://img.shields.io/badge/Redoc-API%20Docs-blue?logo=readthedocs&style=flat-square)](https://a-sharifov.github.io/BioGenomTestProject/)
 
 ---
 
@@ -33,9 +27,8 @@ BioGenomTestProject — тестовый сервис для оценки нут
 ## 🚀 Технологии
 
 - **Язык:** C# 13
-- **Платформа:** .NET 9
-- ASP.NET Core Web API
-- Entity Framework Core
+- ASP.NET Core Web API (Controller)
+- Entity Framework Core (Database first)
 - PostgreSQL
 - Swashbuckle/Swagger
 - Redoc (автоматическая генерация документации)
