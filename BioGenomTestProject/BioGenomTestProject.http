@@ -1,6 +1,17 @@
-@BioGenomTestProject_HostAddress = http://localhost:5249
+﻿@BioGenomTestProject_HostAddress = http://localhost:8080 
 
-GET {{BioGenomTestProject_HostAddress}}/weatherforecast/
+### Получить полную оценку питания
+GET {{BioGenomTestProject_HostAddress}}/api/nutrition
 Accept: application/json
 
-###
+### Получить дефицитные нутриенты
+GET {{BioGenomTestProject_HostAddress}}/api/nutrition/deficient
+Accept: application/json
+
+### Получить нутриенты в норме
+GET {{BioGenomTestProject_HostAddress}}/api/nutrition/sufficient
+Accept: application/json
+
+### Получить сводку по нутриентам
+GET {{BioGenomTestProject_HostAddress}}/api/nutrition/summary
+Accept: application/json
