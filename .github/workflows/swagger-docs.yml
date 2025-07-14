@@ -26,7 +26,7 @@ jobs:
         run: |
           dotnet swagger tofile \
             --output swagger.json \
-            ./BioGenomTestProject.dll v1
+            ./BioGenomTestProject/bin/Debug/net9.0/BioGenomTestProject.dll v1
 
       - name: Install ReDoc CLI
         run: npm install -g redoc-cli
