@@ -13,29 +13,29 @@ public class NutritionRepository(AppDbContext context) : INutritionRepository
         await _context.NutritionAssessments
             .Include(na => na.Results)
             .ThenInclude(nr => nr.Nutrient)
-            .FirstOrDefaultAsync(cancellationToken);
+            .FirstOrDefaultAsync();
 
     public async Task<IEnumerable<NutrientResult>> GetDeficientNutrientsAsync(
         CancellationToken cancellationToken = default) => 
         await _context.NutrientResults
             .Include(nr => nr.Nutrient)
             .Where(nr => nr.IsDeficient)
-            .ToListAsync(cancellationToken);
+            .ToListAsync();
 
     public async Task<IEnumerable<NutrientResult>> GetSufficientNutrientsAsync(
         CancellationToken cancellationToken = default) => 
         await _context.NutrientResults
             .Include(nr => nr.Nutrient)
             .Where(nr => !nr.IsDeficient)
-            .ToListAsync(cancellationToken);
+            .ToListAsync();
 
     public async Task<int> GetDeficientNutrientsCountAsync(
         CancellationToken cancellationToken = default) => 
         await _context.NutrientResults
-            .CountAsync(nr => nr.IsDeficient, cancellationToken);
+            .CountAsync(nr => nr.IsDeficient);
 
     public async Task<int> GetSufficientNutrientsCountAsync(
         CancellationToken cancellationToken = default) => 
         await _context.NutrientResults
-            .CountAsync(nr => !nr.IsDeficient, cancellationToken);
+            .CountAsync(nr => !nr.IsDeficient);
 } 

@@ -1,3 +1,4 @@
+using System.Threading.RateLimiting;
 using BioGenomTestProject.DbContexts;
 using BioGenomTestProject.Repositories;
 using BioGenomTestProject.Services;
@@ -15,11 +16,28 @@ internal sealed class Program
         builder.Services.AddSwaggerGen();
 
         builder.Services.AddDbContext<AppDbContext>(options =>
-            options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+            options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
+            .UseSnakeCaseNamingConvention()
+            );
 
-        // Регистрация репозиториев и сервисов
         builder.Services.AddScoped<INutritionRepository, NutritionRepository>();
         builder.Services.AddScoped<INutritionService, NutritionService>();
+
+        builder.Services.AddRateLimiter(options =>
+        {
+            options.GlobalLimiter =
+                PartitionedRateLimiter.Create<HttpContext, string>(httpContext =>
+                    RateLimitPartition.GetFixedWindowLimiter(
+                        partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+                        factory: _ => new FixedWindowRateLimiterOptions
+                        {
+                            PermitLimit = 20,
+                            Window = TimeSpan.FromMinutes(1), 
+                            QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                            QueueLimit = 0
+                        }));
+            options.RejectionStatusCode = 429;
+        });
 
         builder.Services.AddControllers();
 
@@ -31,6 +49,8 @@ internal sealed class Program
             app.UseSwaggerUI();
             app.UseDeveloperExceptionPage();
         }
+
+        app.UseRateLimiter();
 
         app.MapControllers();
 
