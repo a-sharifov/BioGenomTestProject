@@ -30,10 +30,9 @@ jobs:
         run: dotnet build BioGenomTestProject.sln --no-restore
 
       - name: Install Swashbuckle CLI tool
-        run: dotnet tool install --global Swashbuckle.AspNetCore.Cli
-
-      - name: Add .NET global tools to PATH
-        run: echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
+        run: |
+          dotnet tool install --global Swashbuckle.AspNetCore.Cli
+          echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
 
       - name: Generate swagger.json
         run: |
