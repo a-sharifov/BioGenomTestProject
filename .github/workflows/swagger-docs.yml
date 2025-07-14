@@ -36,7 +36,7 @@ jobs:
 
       - name: Generate swagger.json
         run: |
-          dotnet swagger tofile \
+          swagger tofile \
             --output swagger.json \
             ./BioGenomTestProject/bin/Debug/net9.0/BioGenomTestProject.dll v1
 
