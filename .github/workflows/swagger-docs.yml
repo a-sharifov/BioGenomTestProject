@@ -3,39 +3,55 @@ name: Swagger Docs
 on:
   push:
     branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write  
 
 jobs:
-  generate-docs:
+  generate-and-deploy-docs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup .NET
+      - name: Setup .NET 9
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '9.0.x' 
+          dotnet-version: '9.0.x'
 
-      - name: Restore and Build
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Restore NuGet packages
+        run: dotnet restore BioGenomTestProject.sln
+
+      - name: Build the solution
+        run: dotnet build BioGenomTestProject.sln --no-restore
+
+      - name: Install Swashbuckle CLI
         run: |
-          dotnet restore BioGenomTestProject.sln
-          dotnet build BioGenomTestProject.sln --no-restore
+          dotnet tool install --global Swashbuckle.AspNetCore.Cli
+          echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
 
       - name: Generate swagger.json
         run: |
-          dotnet swagger tofile \
+          swagger tofile \
             --output swagger.json \
-            ./BioGenomTestProject.dll v1
+            ./BioGenomTestProject/bin/Debug/net9.0/BioGenomTestProject.dll v1
 
       - name: Install ReDoc CLI
         run: npm install -g redoc-cli
 
-      - name: Generate HTML documentation with ReDoc
+      - name: Generate HTML documentation
         run: redoc-cli bundle swagger.json -o docs/index.html
 
-      - name: Upload docs artifact (optional)
-        uses: actions/upload-artifact@v4
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
         with:
-          name: swagger-docs
-          path: docs/index.html
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: docs
+          destination_dir: docs
